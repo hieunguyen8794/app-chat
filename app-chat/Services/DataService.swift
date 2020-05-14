@@ -182,6 +182,6 @@ class DataService {
         }
     }
     func getAllData(){
-        
+        print("456")
     }
 }
