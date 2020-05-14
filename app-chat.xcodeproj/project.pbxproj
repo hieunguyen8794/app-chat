@@ -25,6 +25,7 @@
 		C472469F2436E334004DA705 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C472469E2436E334004DA705 /* Assets.xcassets */; };
 		C47246A22436E334004DA705 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C47246A02436E334004DA705 /* LaunchScreen.storyboard */; };
 		C47246AF2436E5BE004DA705 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C47246AE2436E5BE004DA705 /* GoogleService-Info.plist */; };
+		C479E8572468F0D3000B0BD9 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C479E8562468F0D3000B0BD9 /* ProfileView.swift */; };
 		C4A8FCF9244D8F4600738F3A /* CreatePostVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A8FCF8244D8F4600738F3A /* CreatePostVC.swift */; };
 		C4B228062450694000AAE874 /* RegisterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B228052450694000AAE874 /* RegisterVC.swift */; };
 		C4CDB0F02457DA2E00E83A78 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CDB0EF2457DA2E00E83A78 /* UserCell.swift */; };
@@ -63,6 +64,7 @@
 		C47246A12436E334004DA705 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C47246A32436E334004DA705 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C47246AE2436E5BE004DA705 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		C479E8562468F0D3000B0BD9 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C4A8FCF8244D8F4600738F3A /* CreatePostVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostVC.swift; sourceTree = "<group>"; };
 		C4B228052450694000AAE874 /* RegisterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterVC.swift; sourceTree = "<group>"; };
 		C4CDB0EF2457DA2E00E83A78 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				C444AEAD245A795900C6BDA3 /* GroupCell.swift */,
 				C4623E12244AF03300B40FD7 /* ShadowView.swift */,
 				C4CDB0EF2457DA2E00E83A78 /* UserCell.swift */,
+				C479E8562468F0D3000B0BD9 /* ProfileView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -350,6 +353,7 @@
 				C4DC84512456D272005B8BB2 /* CreateGroupVC.swift in Sources */,
 				C4F0237924600195005DE9CA /* GroupMessageVC.swift in Sources */,
 				C4623E15244AF18500B40FD7 /* AuthService.swift in Sources */,
+				C479E8572468F0D3000B0BD9 /* ProfileView.swift in Sources */,
 				C4D10545245ADDDD00AF684E /* GroupFeedVC.swift in Sources */,
 				C4F57B63244EAFD300C4F946 /* Message.swift in Sources */,
 				C4B228062450694000AAE874 /* RegisterVC.swift in Sources */,

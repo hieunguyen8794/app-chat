@@ -50,12 +50,21 @@ class FeedCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    var actionBlock = { }
+    @objc func moveToProfile() {
+        actionBlock()
+    }
     
     func configure (imageView: UIImage,userMail: String,message: String,timeStamp: NSNumber){
         let timeStamp: NSNumber = timeStamp
         addSubview(profileImage)
         profileImage.image = imageView
         userName.text = userMail
+        userName.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moveToProfile)))
+        userName.isUserInteractionEnabled = true
+        profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moveToProfile)))
+        profileImage.isUserInteractionEnabled = true
+        
         mainContent.text = message
         setupTimeStamp(timeStamp: timeStamp)
         let profileImageContrains = [

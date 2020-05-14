@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Firebase
 class GroupMessageCell: UITableViewCell {
 
     let messageCell = UILabel()
@@ -16,6 +16,8 @@ class GroupMessageCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "defaultProfileImage")
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 10
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     let userName = UILabel()
@@ -30,6 +32,10 @@ class GroupMessageCell: UITableViewCell {
 
     var messageCellTopConstrainOfIsComing:NSLayoutConstraint!
     var messageCellTopConstrainOfIsNotComing:NSLayoutConstraint!
+    
+    var nextMessage: Bool?
+    
+    
     var isComing: Bool! {
         didSet {
                 bubbleBackgroundView.backgroundColor = isComing ? .white : .darkGray
@@ -37,7 +43,6 @@ class GroupMessageCell: UITableViewCell {
                 messageCellLeadingConstrain.isActive = false
                 messageCellTrailingConstrain.isActive = false
                 profileImageLeadingConstrain.isActive = false
-                //profileImageTrailingConstrain.isActive = false
                 userNameLeadingConstrain.isActive = false
                 userNameTrailingConstrain.isActive = false
             
@@ -46,10 +51,9 @@ class GroupMessageCell: UITableViewCell {
             
                 if isComing {
                     profileImageLeadingConstrain.isActive = true
-                    //profileImageTrailingConstrain.isActive = false
                     messageCellLeadingConstrain.isActive = true
                     messageCellTrailingConstrain.isActive = false
-                    userNameLeadingConstrain.isActive = true
+//                    userNameLeadingConstrain.isActive = false
                     //userNameTrailingConstrain.isActive = false
                     
                     userName.isHidden = false
@@ -59,28 +63,51 @@ class GroupMessageCell: UITableViewCell {
                     messageCellTopConstrainOfIsNotComing.isActive = false
                 } else {
                     profileImageLeadingConstrain.isActive = false
-                    //profileImageTrailingConstrain.isActive = false
                     messageCellLeadingConstrain.isActive = false
                     messageCellTrailingConstrain.isActive = true
-                    userNameLeadingConstrain.isActive = false
+//                    userNameLeadingConstrain.isActive = false
                     //userNameTrailingConstrain.isActive = true
                     
                     userName.isHidden = true
                     profileImage.isHidden = true
                     
                     
-                    messageCellTopConstrainOfIsComing.isActive = false
                     messageCellTopConstrainOfIsNotComing.isActive = true
+                    messageCellTopConstrainOfIsComing.isActive = false
                 }
             }
     }
     
+    func configureCell(withMessage  message: Message,withNextMessageComing nextMessage: Bool){
+        messageCell.text = message.content
+        //cell.selectionStyle = .none
+        self.nextMessage = nextMessage
+        
+        if message.senderId == Auth.auth().currentUser?.uid {
+               self.isComing = false
+               self.userName.text = Auth.auth().currentUser?.email
+           } else {
+               self.isComing = true
+               DataService.instance.getUserName(withUid: message.senderId, handler: { (resultEmail) in
+                   self.userName.text = resultEmail
+               })
+        }
+        DataService.instance.getUserImage(withUid: message.senderId) { (image, error) in
+            if error != nil {
+                print(error!)
+            } else if nextMessage == false {
+                self.profileImage.image = nil
+            } else {
+                self.profileImage.image = image
+            }
+        }
+    }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubview(userName)
-        userName.text = "username@gmail.com"
-        userName.font = UIFont(name: "Menlo", size: 13)
-        userName.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.7447827483)
+//        addSubview(userName)
+//        userName.text = "username@gmail.com"
+//        userName.font = UIFont(name: "Menlo", size: 13)
+//        userName.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.7447827483)
 
         addSubview(profileImage)
 
@@ -118,25 +145,24 @@ class GroupMessageCell: UITableViewCell {
         NSLayoutConstraint.activate(profileImageConstrains)
         
         
-        let userNameConstrains = [
-            userName.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-            userName.bottomAnchor.constraint(equalTo: bubbleBackgroundView.topAnchor, constant: 5),
-            userName.widthAnchor.constraint(lessThanOrEqualToConstant: 250)
-        ]
-        userName.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate(userNameConstrains)
+//        let userNameConstrains = [
+//            userName.topAnchor.constraint(equalTo: topAnchor, constant: 5),
+//            userName.bottomAnchor.constraint(equalTo: bubbleBackgroundView.topAnchor, constant: 5),
+//            userName.widthAnchor.constraint(lessThanOrEqualToConstant: 250)
+//        ]
+//        userName.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate(userNameConstrains)
 
         userNameLeadingConstrain = userName.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 16)
         userNameTrailingConstrain = userName.trailingAnchor.constraint(equalTo: profileImage.leadingAnchor, constant: -16)
 
         profileImageLeadingConstrain = profileImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16)
-        profileImageTrailingConstrain = profileImage.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
               
         messageCellLeadingConstrain = messageCell.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 32)
         messageCellTrailingConstrain = messageCell.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
         
         
-        messageCellTopConstrainOfIsComing = messageCell.topAnchor.constraint(equalTo: self.topAnchor, constant: 48)
+        messageCellTopConstrainOfIsComing = messageCell.topAnchor.constraint(equalTo: self.topAnchor, constant: 16)
         messageCellTopConstrainOfIsNotComing = messageCell.topAnchor.constraint(equalTo: self.topAnchor, constant: 16)
         
     }

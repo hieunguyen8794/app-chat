@@ -41,6 +41,8 @@ class GroupMessageVC: UIViewController {
         tableView.dataSource = self
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        tableView.keyboardDismissMode = UIScrollView.KeyboardDismissMode.onDrag
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -53,7 +55,6 @@ class GroupMessageVC: UIViewController {
                 }
             }
         }
-//        messageTextField.becomeFirstResponder()
     }
     func initData(forGroup group: Group){
         self.group = group
@@ -66,7 +67,7 @@ class GroupMessageVC: UIViewController {
         let topViewConstrains = [topView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
                                  topView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
                                  topView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-                                 topView.heightAnchor.constraint(equalToConstant: 130)]
+                                 topView.heightAnchor.constraint(equalToConstant: 100)]
         NSLayoutConstraint.activate(topViewConstrains)
         
         let labelTitle = UILabel()
@@ -76,7 +77,7 @@ class GroupMessageVC: UIViewController {
         labelTitle.font = UIFont(name: "Menlo-Bold", size: 25)
         labelTitle.translatesAutoresizingMaskIntoConstraints = false
         let labelTitleConstrains = [labelTitle.centerXAnchor.constraint(equalTo: topView.centerXAnchor, constant: 0),
-                                    labelTitle.topAnchor.constraint(equalTo: topView.topAnchor, constant: 70)
+                                    labelTitle.bottomAnchor.constraint(equalTo: topView.bottomAnchor, constant: -16)
         ]
         NSLayoutConstraint.activate(labelTitleConstrains)
         
@@ -87,8 +88,8 @@ class GroupMessageVC: UIViewController {
         let backBtnContrains = [
             backBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
             backBtn.centerYAnchor.constraint(equalTo: labelTitle.centerYAnchor, constant: 0),
-            backBtn.heightAnchor.constraint(equalToConstant: 50),
-            backBtn.widthAnchor.constraint(equalToConstant: 50)
+            backBtn.heightAnchor.constraint(equalToConstant: 32),
+            backBtn.widthAnchor.constraint(equalToConstant: 32)
         ]
         NSLayoutConstraint.activate(backBtnContrains)
         backBtn.addTarget(self, action: #selector(backBtnWasPressed(sender:)), for: .touchUpInside)
@@ -148,7 +149,6 @@ class GroupMessageVC: UIViewController {
         if let userInfo = notification.userInfo{
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
             let isKeyboardShowing = notification.name == UIResponder.keyboardWillShowNotification
-//            print(isKeyboardShowing)
             viewSendBtnBottomConstrain?.constant = isKeyboardShowing ? -keyboardFrame.height : 0
             UIView.animate(withDuration: 0, delay: 0, options: .curveEaseOut, animations: {
                 self.view.layoutIfNeeded()
@@ -180,23 +180,33 @@ extension GroupMessageVC : UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "GroupMessageCell") as? GroupMessageCell else { return UITableViewCell() }
-        cell.messageCell.text = messageArray[indexPath.row].content
-        cell.selectionStyle = .none
-        if self.messageArray[indexPath.row].senderId == Auth.auth().currentUser?.uid {
-               cell.isComing = false
-               cell.userName.text = Auth.auth().currentUser?.email
-           } else {
-               cell.isComing = true
-               DataService.instance.getUserName(withUid: self.messageArray[indexPath.row].senderId, handler: { (resultEmail) in
-                   cell.userName.text = resultEmail
-               })
+        let message = messageArray[indexPath.row]
+        // check if next cell is coming: don't show avatar
+        if indexPath.row > 0 && indexPath.row < messageArray.count - 1{
+            if message.senderId == messageArray[indexPath.row + 1].senderId {
+               cell.configureCell(withMessage: message,withNextMessageComing: false)
+            } else {
+               cell.configureCell(withMessage: message,withNextMessageComing: true)
+            }
+        } else {
+            cell.configureCell(withMessage: message,withNextMessageComing: true)
         }
         return cell
     }
     
-    
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        print(indexPath.row)
+        
+        if indexPath.row > 0 {
+            if messageArray[indexPath.row].senderId == messageArray[indexPath.row + 1].senderId {
+               print(false)
+            } else {
+               print(true)
+            }
+        }
+        
+        
         messageTextField.endEditing(true)
     }
     

@@ -49,13 +49,8 @@ class DataService {
         Complete(true)
     }
     func getUserName (withUid uid: String, handler: @escaping (_ result: String)->()){
-        REF_USERS.observeSingleEvent(of: .value) { (userSnapshot) in
-            guard let userSnapshot = userSnapshot.children.allObjects as? [DataSnapshot] else { return }
-            for user in userSnapshot {
-                if user.key == uid {
-                    handler(user.childSnapshot(forPath: "email").value as! String)
-                }
-            }
+        REF_USERS.child(uid).observe(.value) { (result) in
+            handler(result.childSnapshot(forPath: "email").value as! String)
         }
     }
     func getUserImage (withUid uid: String, handler: @escaping (_ image: UIImage?,_ error: Error?)->()){
@@ -63,7 +58,7 @@ class DataService {
             let url  = result.childSnapshot(forPath: "photoURL").value as? String
             if url != nil {
                 if let cachedImage = self.imageCache.object(forKey: url as AnyObject) as? UIImage {
-                    print("image be cached")
+//                    print("image be cached")
                     handler(cachedImage,nil)
                     return
                 }
@@ -74,7 +69,7 @@ class DataService {
                         return
                     }
                     self.imageCache.setObject(UIImage(data: data!)!, forKey: url as AnyObject)
-                    print("image be set")
+//                    print("image be set")
                     handler(UIImage(data: data!),error)
                 })
             }else{
@@ -121,13 +116,17 @@ class DataService {
         }
         handler(true,nil)
     }
-    func getMail(emailQuery query: String, handler: @escaping (_ emailArray: [String])->()){
+    func getMail(emailQuery query: String?, handler: @escaping (_ emailArray: [String])->()){
         var emailArray = [String]()
         REF_USERS.observeSingleEvent(of: .value) { (userDataSnapshot) in
             guard let userDataSnapshot = userDataSnapshot.children.allObjects as? [DataSnapshot] else {return}
             for email in userDataSnapshot {
                 let emailContain = email.childSnapshot(forPath: "email").value as! String
-                if emailContain.contains(query) {
+                if query != nil {
+                    if emailContain.contains(query!) {
+                        emailArray.append(emailContain)
+                    }
+                } else {
                     emailArray.append(emailContain)
                 }
             }
@@ -163,6 +162,23 @@ class DataService {
                 }
             }
             handler(groupArray)
+        }
+    }
+    func getAllFeedWithUid(uid: String,handler: @escaping (_ result: [Message])->()){
+        var messageArray = [Message]()
+        REF_FEED.observeSingleEvent(of: .value) { (messageArrayDataSnapshot) in
+            guard let messageArrayDataSnapshot = messageArrayDataSnapshot.children.allObjects as? [DataSnapshot] else { return }
+            for message in messageArrayDataSnapshot{
+                if message.childSnapshot(forPath: "sendID").value as! String == uid {
+                    let keyFeed = message.key
+                    let content = message.childSnapshot(forPath: "content").value as! String
+                    let senderId = message.childSnapshot(forPath: "sendID").value as! String
+                    let timeStamp = message.childSnapshot(forPath: "timestamp").value  as! NSNumber
+                    let message = Message(keyFeed: keyFeed,content: content, senderId: senderId, timeStamp: timeStamp)
+                    messageArray.append(message)
+                }
+            }
+            handler(messageArray)
         }
     }
 }

@@ -62,9 +62,10 @@ class MeVC: UIViewController {
     }
     @IBAction func saveImageBtnWasPressed(_ sender: Any) {
         let imageName = NSUUID().uuidString
-        let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
+        let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).jpg")
         let image = self.profileImage.image!
-        if let uploadData = image.pngData() {
+//        if let uploadData = image.pngData() {
+        if let uploadData = image.jpegData(compressionQuality: 0.1) {
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil {
                     print(error!)
