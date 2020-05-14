@@ -181,4 +181,7 @@ class DataService {
             handler(messageArray)
         }
     }
+    func getAllData(){
+        
+    }
 }
