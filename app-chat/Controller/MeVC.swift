@@ -20,6 +20,13 @@ class MeVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var messageArray = [Message]()
+    var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = #colorLiteral(red: 0.1234754696, green: 0.128762424, blue: 0.1390718222, alpha: 1)
+        return view
+    }()
+    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +49,8 @@ class MeVC: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(FeedCell.self, forCellReuseIdentifier: "feedCell")
+        
+        setupHeaderView()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -51,6 +60,12 @@ class MeVC: UIViewController {
                 self.tableView.reloadData()
             }
         }
+    }
+    func setupHeaderView(){
+        headerView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 300)
+        tableView.addSubview(headerView)
+        
+        
     }
     @objc func selectProfileImageView(){
         let pickerImage = UIImagePickerController()
@@ -184,6 +199,9 @@ extension MeVC: UITableViewDelegate, UITableViewDataSource {
         
         //print(estimatedFrame.height)
         return estimatedFrame.height + 100
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 300
     }
     
 }
