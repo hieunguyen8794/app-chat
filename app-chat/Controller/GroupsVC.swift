@@ -9,7 +9,7 @@
 import UIKit
 
 class GroupsVC: UIViewController {
-
+    
     var arrayGroup = [Group]()
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
@@ -26,8 +26,8 @@ class GroupsVC: UIViewController {
             }
         }
     }
-
-
+    
+    
 }
 extension GroupsVC : UITableViewDelegate,UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -40,7 +40,11 @@ extension GroupsVC : UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "groupCell") as? GroupCell else { return UITableViewCell() }
         let group = arrayGroup[indexPath.row]
-        cell.ConfigureCell(title: group.title, description: group.description, member: group.memberCount)
+        
+        
+        DataService.instance.getLastMessageOfGroup(withGroupKey: group.key) { (resultLastMessage) in
+            cell.ConfigureCell(title: group.title, description: group.description, lastContent: resultLastMessage.content, timeStamp:               resultLastMessage.timeStamp)
+        }
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

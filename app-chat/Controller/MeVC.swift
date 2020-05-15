@@ -10,11 +10,16 @@ import UIKit
 import Firebase
 
 class MeVC: UIViewController {
-
+    
+    @IBOutlet weak var bioLbl: UILabel!
+    @IBOutlet weak var choseImage: UIButton!
     @IBOutlet weak var cancelImageBtn: UIButton!
     @IBOutlet weak var saveImageBtn: UIButton!
     @IBOutlet weak var emailLbl: UILabel!
     @IBOutlet weak var profileImage: UIImageView!
+    @IBOutlet weak var tableView: UITableView!
+    
+    var messageArray = [Message]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,9 +29,28 @@ class MeVC: UIViewController {
         profileImage.isUserInteractionEnabled = true
         profileImage.layer.cornerRadius = profileImage.frame.height / 2
         profileImage.layer.masksToBounds = true
+        
+        choseImage.addGestureRecognizer(UITapGestureRecognizer(target:  self,action: #selector(selectProfileImageView) ))
+        choseImage.isUserInteractionEnabled = true
+        choseImage.layer.cornerRadius = choseImage.frame.height / 2
+        choseImage.layer.masksToBounds = true
+        
         cancelImageBtn.isHidden = true
         saveImageBtn.isHidden = true
         setupImageProfile()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(FeedCell.self, forCellReuseIdentifier: "feedCell")
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        DataService.instance.REF_FEED.observe(.value) { (result) in
+            DataService.instance.getAllFeedWithUid(uid: Auth.auth().currentUser!.uid) { (resultMessage) in
+                self.messageArray = resultMessage
+                self.tableView.reloadData()
+            }
+        }
     }
     @objc func selectProfileImageView(){
         let pickerImage = UIImagePickerController()
@@ -62,9 +86,10 @@ class MeVC: UIViewController {
     }
     @IBAction func saveImageBtnWasPressed(_ sender: Any) {
         let imageName = NSUUID().uuidString
-        let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
+        let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).jpg")
         let image = self.profileImage.image!
-        if let uploadData = image.pngData() {
+//        if let uploadData = image.pngData() {
+        if let uploadData = image.jpegData(compressionQuality: 0.1) {
             storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
                 if error != nil {
                     print(error!)
@@ -95,7 +120,7 @@ class MeVC: UIViewController {
         cancelImageBtn.isHidden = true
         DataService.instance.getUserImage(withUid: Auth.auth().currentUser!.uid, handler: { (image, error) in
             if error != nil {
-                print(error)
+                print(error!)
             } else {
                 self.profileImage.image = image
             }
@@ -125,5 +150,40 @@ class MeVC: UIViewController {
 
 }
 extension MeVC: UIImagePickerControllerDelegate ,UINavigationControllerDelegate {
+    
+}
+extension MeVC: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messageArray.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell") as? FeedCell else { return UITableViewCell()}
+        let message = messageArray[indexPath.row]
+        var imageProfile:UIImage = #imageLiteral(resourceName: "defaultProfileImage")
+        DataService.instance.getUserImage(withUid: message.senderId) { (image, error) in
+            if error != nil {
+                print(error!)
+            } else {
+                imageProfile = image!
+                cell.configure(imageView: imageProfile, userMail: Auth.auth().currentUser!.email!, message: message.content, timeStamp: message.timeStamp)
+            }
+        }
+        cell.selectionStyle = .none
+        return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let message = messageArray[indexPath.row]
+        let widthOfMainContent = view.frame.width - 16 - 16
+        let size = CGSize(width: widthOfMainContent, height: 1000)
+        let attributes = [NSAttributedString.Key.font : UIFont(name: "Menlo", size: 12)]
+        let estimatedFrame = NSString(string: message.content).boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes as [NSAttributedString.Key : Any], context: nil)
+        
+        //print(estimatedFrame.height)
+        return estimatedFrame.height + 100
+    }
     
 }

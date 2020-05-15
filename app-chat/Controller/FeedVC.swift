@@ -9,7 +9,9 @@
 import UIKit
 import Firebase
 class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
-
+    @IBOutlet var mainView: UIView!
+    @IBOutlet weak var barView: UITabBarItem!
+    @IBOutlet weak var topView: UIView!
     @IBOutlet weak var tableView: UITableView!
     
     var messageArray = [Message]()
@@ -20,8 +22,6 @@ class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(FeedCell.self, forCellReuseIdentifier: "feedCell")
-        
-        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -31,7 +31,7 @@ class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
                 self.tableView.reloadData()
             }
         }
-//        tableView.separatorStyle = .none
+        tableView.separatorStyle = .none
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -58,6 +58,25 @@ extension FeedVC: UITableViewDelegate,UITableViewDataSource{
                 }
             }
         }
+        cell.actionBlock = {
+            let profileView = ProfileView()
+            profileView.initData(withUID: message.senderId)
+            
+            self.view.addSubview(profileView)
+            let profileViewConstrains = [
+                profileView.topAnchor.constraint(equalTo: self.mainView!.topAnchor,constant: 0),
+                profileView.leadingAnchor.constraint(equalTo: self.mainView!.leadingAnchor,constant: 0),
+                profileView.bottomAnchor.constraint(equalTo: self.mainView!.bottomAnchor,constant: 0),
+                profileView.trailingAnchor.constraint(equalTo: self.mainView!.trailingAnchor,constant: 0)
+            ]
+            profileView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate(profileViewConstrains)
+            UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseOut, animations: {
+                profileView.center.x -= self.view.bounds.width
+            }) { (complete) in
+                
+            }
+        }
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -73,7 +92,7 @@ extension FeedVC: UITableViewDelegate,UITableViewDataSource{
         let attributes = [NSAttributedString.Key.font : UIFont(name: "Menlo", size: 12)]
         let estimatedFrame = NSString(string: message.content).boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes as [NSAttributedString.Key : Any], context: nil)
         
-        print(estimatedFrame.height)
+        //print(estimatedFrame.height)
         return estimatedFrame.height + 100
     }
     

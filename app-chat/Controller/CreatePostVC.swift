@@ -23,12 +23,12 @@ class CreatePostVC: UIViewController {
         super.viewWillAppear(animated)
         userEmail.text = Auth.auth().currentUser?.email
         sendBtn.isEnabled = true
-        sendBtn.isHidden = true
+//        sendBtn.isHidden = true
         userImage.layer.cornerRadius = 25
         userImage.layer.masksToBounds = true
         DataService.instance.getUserImage(withUid: Auth.auth().currentUser!.uid) { (image, error) in
             if error != nil {
-                print(error)
+                print(error!)
             } else {
                 self.userImage.image = image
             }
@@ -54,6 +54,6 @@ class CreatePostVC: UIViewController {
 extension CreatePostVC: UITextViewDelegate{
     func textViewDidBeginEditing(_ textView: UITextView) {
         contentTV.text = ""
-        sendBtn.isHidden = false
+//        sendBtn.isHidden = false
     }
 }

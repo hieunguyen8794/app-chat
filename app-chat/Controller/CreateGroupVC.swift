@@ -33,6 +33,10 @@ class CreateGroupVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         doneBtn.isHidden = true
+        DataService.instance.getMail(emailQuery: nil) { (resultEmailArray) in
+            self.arrayEmail = resultEmailArray
+            self.tableView.reloadData()
+        }
     }
     @objc func textFieldDidChanged() {
         if addPeopleTextFiled.text == "" {
@@ -79,7 +83,11 @@ extension CreateGroupVC: UITableViewDelegate,UITableViewDataSource {
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "userCell") as? UserCell else {return UITableViewCell() }
-        let profileImage = UIImage(named: "defaultProfileImage")
+        var profileImage = UIImage(named: "defaultProfileImage")
+        //setup image cell
+        
+        
+     
         cell.configureCell(profileImage: profileImage!, emailLbl: arrayEmail[indexPath.row], isSelected: chosenEmailArray.contains(arrayEmail[indexPath.row]) ? true : false)
         return cell
     }

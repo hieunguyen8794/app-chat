@@ -25,6 +25,12 @@ class DetailFeedVC: UIViewController {
         detailContent.text = detailFeed?.content
         imageProfileUser.layer.cornerRadius = 25
         imageProfileUser.layer.masksToBounds = true
+        
+        emailUserLBL.isUserInteractionEnabled = true
+        emailUserLBL.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moveToProfile)))
+        imageProfileUser.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moveToProfile)))
+        imageProfileUser.isUserInteractionEnabled = true
+        
         DataService.instance.getUserName(withUid: detailFeed!.senderId, handler: { (resultUsername) in
             self.emailUserLBL.text = resultUsername
             if Auth.auth().currentUser?.email == resultUsername {
@@ -32,9 +38,9 @@ class DetailFeedVC: UIViewController {
                 //self.detailContent.isEditable = true
             }
         })
-        DataService.instance.getUserImage(withUid: Auth.auth().currentUser!.uid) { (image, error) in
+        DataService.instance.getUserImage(withUid: detailFeed!.senderId) { (image, error) in
             if error != nil {
-                print(error)
+                print(error!)
             } else {
                 self.imageProfileUser.image = image
             }
@@ -43,7 +49,9 @@ class DetailFeedVC: UIViewController {
     func getDetailFeed(message: Message){
         self.detailFeed = message
     }
-    
+    @objc func moveToProfile() {
+        print("moveToProfileFromDetailVC")
+    }
     @IBAction func deleteBtnWasPressed(_ sender: Any) {
         let alertDelete = UIAlertController(title: "Alert", message: "Do you want to delete this _feed?", preferredStyle: .actionSheet)
         let okeAction = UIAlertAction(title: "Yes", style: .destructive) { (action) in

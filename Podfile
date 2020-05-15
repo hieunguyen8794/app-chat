@@ -10,6 +10,6 @@ target 'app-chat' do
   pod 'Firebase/Database',:modular_headers => true
   pod 'Firebase/Auth'
   pod 'Firebase/Storage',:modular_headers => true
-  pod 'FBSDKLoginKit',:modular_headers => true
-  pod 'FBSDKCoreKit',:modular_headers => true
+  pod 'FBSDKLoginKit'
+  pod 'FBSDKCoreKit'
 end
