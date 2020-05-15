@@ -42,6 +42,20 @@ class FeedCell: UITableViewCell {
         label.numberOfLines = 0
         return label
     }()
+    let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = #colorLiteral(red: 0.1869209111, green: 0.2056120634, blue: 0.2248058021, alpha: 1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let likeBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "heart"), for: .normal)
+        btn.tintColor = .white
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style,reuseIdentifier: reuseIdentifier)
         backgroundColor = #colorLiteral(red: 0.1817291081, green: 0.186937958, blue: 0.20142892, alpha: 1)
@@ -99,9 +113,26 @@ class FeedCell: UITableViewCell {
             mainContent.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16)
         ]
         NSLayoutConstraint.activate(mainContainConstrains)
+     
+//        addSubview(likeBtn)
+//        let likeBtnConstrains = [
+//            likeBtn.topAnchor.constraint(equalTo: mainContent.bottomAnchor, constant: 0),
+//            likeBtn.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
+//            likeBtn.heightAnchor.constraint(equalToConstant: 32),
+//            likeBtn.widthAnchor.constraint(equalToConstant: 32)
+//        ]
+//        NSLayoutConstraint.activate(likeBtnConstrains)
+        
+//        addSubview(separatorView)
+//        let separatorViewConstrains = [
+//            separatorView.topAnchor.constraint(equalTo: likeBtn.bottomAnchor, constant: 16),
+//            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 0),
+//            separatorView.trailingAnchor.constraint(equalTo: trailingAnchor,constant: 0),
+//            separatorView.heightAnchor.constraint(equalToConstant: 10)
+//        ]
+//        NSLayoutConstraint.activate(separatorViewConstrains)
     }
     func setupTimeStamp (timeStamp: NSNumber) {
-       
         let timeStampData = NSDate(timeIntervalSince1970: timeStamp.doubleValue)
         
         let dateFormatter = DateFormatter()

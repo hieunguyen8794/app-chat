@@ -747,100 +747,18 @@
                                     <constraint firstItem="Bvn-RP-zQD" firstAttribute="centerY" secondItem="ne5-jx-6rb" secondAttribute="centerY" id="min-Kq-gcb"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="12V-A7-s9d">
-                                <rect key="frame" x="0.0" y="100" width="414" height="250"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultProfileImage" translatesAutoresizingMaskIntoConstraints="NO" id="RqS-X0-TrD">
-                                        <rect key="frame" x="156" y="30" width="102" height="102"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="102" id="1pv-rH-aEG"/>
-                                            <constraint firstAttribute="height" constant="102" id="win-SW-5tI"/>
-                                        </constraints>
-                                    </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="user@email.com" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cun-7w-kG2">
-                                        <rect key="frame" x="16" y="148" width="382" height="23.5"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Lub-TV-Udl"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="Menlo-Bold" family="Menlo" pointSize="20"/>
-                                        <color key="textColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vcr-io-zIH">
-                                        <rect key="frame" x="258" y="82" width="100" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="4q8-tF-l9a"/>
-                                            <constraint firstAttribute="width" constant="100" id="JQA-bB-PQQ"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="20"/>
-                                        <color key="tintColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <state key="normal" title=" Save" image="square.and.arrow.up" catalog="system">
-                                            <color key="titleColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="saveImageBtnWasPressed:" destination="Jlk-GR-kxg" eventType="touchUpInside" id="RLc-pq-sz6"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E7w-1U-xCp">
-                                        <rect key="frame" x="258" y="0.0" width="50" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="50" id="HZB-ij-1dp"/>
-                                            <constraint firstAttribute="height" constant="50" id="vvp-RH-TU9"/>
-                                        </constraints>
-                                        <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                        <state key="normal" image="close"/>
-                                        <connections>
-                                            <action selector="cancelBtnImageWasPressed:" destination="Jlk-GR-kxg" eventType="touchUpInside" id="zdl-Ki-X0b"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First stop on our #EuropaRoadTrip with my 🥜 Lloyd Griffith and Enterprise… " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zQO-9E-Arz">
-                                        <rect key="frame" x="16" y="179.5" width="382" height="35"/>
-                                        <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="15"/>
-                                        <color key="textColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5xe-tB-XsU">
-                                        <rect key="frame" x="234" y="110" width="24" height="22"/>
-                                        <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                                        <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="18"/>
-                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" image="camera" catalog="system"/>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" red="0.1709165406" green="0.1822766472" blue="0.2003849097" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstItem="RqS-X0-TrD" firstAttribute="top" secondItem="12V-A7-s9d" secondAttribute="top" constant="30" id="40M-Ab-pDg"/>
-                                    <constraint firstItem="zQO-9E-Arz" firstAttribute="leading" secondItem="12V-A7-s9d" secondAttribute="leading" constant="16" id="CRc-MG-7w9"/>
-                                    <constraint firstAttribute="trailing" secondItem="cun-7w-kG2" secondAttribute="trailing" constant="16" id="JtE-5F-VSo"/>
-                                    <constraint firstItem="vcr-io-zIH" firstAttribute="top" secondItem="E7w-1U-xCp" secondAttribute="bottom" constant="32" id="KOE-8v-Hpg"/>
-                                    <constraint firstItem="zQO-9E-Arz" firstAttribute="top" secondItem="cun-7w-kG2" secondAttribute="bottom" constant="8" id="R21-ta-k3O"/>
-                                    <constraint firstItem="cun-7w-kG2" firstAttribute="leading" secondItem="12V-A7-s9d" secondAttribute="leading" constant="16" id="Rrx-Dz-nVj"/>
-                                    <constraint firstItem="cun-7w-kG2" firstAttribute="top" secondItem="RqS-X0-TrD" secondAttribute="bottom" constant="16" id="Sbm-Bp-SU4"/>
-                                    <constraint firstItem="vcr-io-zIH" firstAttribute="leading" secondItem="RqS-X0-TrD" secondAttribute="trailing" id="TIq-yZ-4h0"/>
-                                    <constraint firstItem="5xe-tB-XsU" firstAttribute="bottom" secondItem="RqS-X0-TrD" secondAttribute="bottom" id="Z19-f3-1q5"/>
-                                    <constraint firstItem="RqS-X0-TrD" firstAttribute="centerX" secondItem="12V-A7-s9d" secondAttribute="centerX" id="ZWY-ca-AKI"/>
-                                    <constraint firstAttribute="height" constant="250" id="bJm-7K-xZw"/>
-                                    <constraint firstItem="E7w-1U-xCp" firstAttribute="top" secondItem="12V-A7-s9d" secondAttribute="top" id="gwC-Ze-P2I"/>
-                                    <constraint firstItem="5xe-tB-XsU" firstAttribute="trailing" secondItem="RqS-X0-TrD" secondAttribute="trailing" id="ieM-Ph-DU0"/>
-                                    <constraint firstAttribute="trailing" secondItem="zQO-9E-Arz" secondAttribute="trailing" constant="16" id="nUb-pp-jbZ"/>
-                                    <constraint firstItem="E7w-1U-xCp" firstAttribute="leading" secondItem="RqS-X0-TrD" secondAttribute="trailing" id="seF-xH-rTt"/>
-                                </constraints>
-                            </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="100" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="zmf-x3-mBN">
-                                <rect key="frame" x="0.0" y="350" width="414" height="463"/>
+                                <rect key="frame" x="0.0" y="100" width="414" height="713"/>
                                 <color key="backgroundColor" red="0.12347546964883804" green="0.12876242399215698" blue="0.13907182216644287" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="zmf-x3-mBN" firstAttribute="top" secondItem="JT0-cv-4Iu" secondAttribute="bottom" id="35B-Bv-LvC"/>
                             <constraint firstItem="aBJ-c1-sxY" firstAttribute="trailing" secondItem="zmf-x3-mBN" secondAttribute="trailing" id="3Uc-7H-Okl"/>
                             <constraint firstItem="zmf-x3-mBN" firstAttribute="leading" secondItem="aBJ-c1-sxY" secondAttribute="leading" id="79D-BS-cL5"/>
-                            <constraint firstItem="aBJ-c1-sxY" firstAttribute="trailing" secondItem="12V-A7-s9d" secondAttribute="trailing" id="BAl-18-6HT"/>
                             <constraint firstItem="JT0-cv-4Iu" firstAttribute="top" secondItem="vD0-zh-AkL" secondAttribute="top" id="JSu-fh-xXK"/>
                             <constraint firstAttribute="trailing" secondItem="JT0-cv-4Iu" secondAttribute="trailing" id="WSi-U2-I0A"/>
-                            <constraint firstItem="zmf-x3-mBN" firstAttribute="top" secondItem="12V-A7-s9d" secondAttribute="bottom" id="Zzm-rR-9bR"/>
-                            <constraint firstItem="12V-A7-s9d" firstAttribute="top" secondItem="JT0-cv-4Iu" secondAttribute="bottom" id="aUr-GQ-zmb"/>
-                            <constraint firstItem="12V-A7-s9d" firstAttribute="leading" secondItem="aBJ-c1-sxY" secondAttribute="leading" id="e3F-yu-cfl"/>
                             <constraint firstItem="zmf-x3-mBN" firstAttribute="bottom" secondItem="aBJ-c1-sxY" secondAttribute="bottom" id="fyO-2e-RX8"/>
                             <constraint firstItem="JT0-cv-4Iu" firstAttribute="leading" secondItem="vD0-zh-AkL" secondAttribute="leading" id="mku-Ex-938"/>
                         </constraints>
@@ -850,12 +768,6 @@
                         <color key="badgeColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBarItem>
                     <connections>
-                        <outlet property="bioLbl" destination="zQO-9E-Arz" id="sdS-KB-Idu"/>
-                        <outlet property="cancelImageBtn" destination="E7w-1U-xCp" id="cn9-zd-Wcd"/>
-                        <outlet property="choseImage" destination="5xe-tB-XsU" id="clW-om-XrP"/>
-                        <outlet property="emailLbl" destination="cun-7w-kG2" id="uKA-am-blh"/>
-                        <outlet property="profileImage" destination="RqS-X0-TrD" id="PPv-2j-afE"/>
-                        <outlet property="saveImageBtn" destination="vcr-io-zIH" id="H9O-Vw-LpE"/>
                         <outlet property="tableView" destination="zmf-x3-mBN" id="fLg-VO-weG"/>
                     </connections>
                 </viewController>
@@ -1184,7 +1096,6 @@
     <resources>
         <image name="addNewIcon" width="19" height="19"/>
         <image name="backIcon" width="12" height="22"/>
-        <image name="camera" catalog="system" width="64" height="48"/>
         <image name="close" width="21" height="20"/>
         <image name="defaultProfileImage" width="102" height="102"/>
         <image name="delete.left" catalog="system" width="64" height="52"/>
@@ -1195,7 +1106,6 @@
         <image name="logoutIcon" width="19" height="21"/>
         <image name="me-tabIcon" width="25" height="25"/>
         <image name="send" width="29" height="29"/>
-        <image name="square.and.arrow.up" catalog="system" width="56" height="64"/>
         <image name="whiteCheckmark" width="18" height="14"/>
     </resources>
 </document>

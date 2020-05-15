@@ -11,12 +11,6 @@ import Firebase
 
 class MeVC: UIViewController {
     
-    @IBOutlet weak var bioLbl: UILabel!
-    @IBOutlet weak var choseImage: UIButton!
-    @IBOutlet weak var cancelImageBtn: UIButton!
-    @IBOutlet weak var saveImageBtn: UIButton!
-    @IBOutlet weak var emailLbl: UILabel!
-    @IBOutlet weak var profileImage: UIImageView!
     @IBOutlet weak var tableView: UITableView!
     
     var messageArray = [Message]()
@@ -25,22 +19,70 @@ class MeVC: UIViewController {
         view.backgroundColor = #colorLiteral(red: 0.1234754696, green: 0.128762424, blue: 0.1390718222, alpha: 1)
         return view
     }()
-    
-
+    var profileImage: UIImageView = {
+        let profileImageView = UIImageView()
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.layer.cornerRadius = 50
+        profileImageView.layer.masksToBounds = true
+        return profileImageView
+    }()
+    var choseImage: UIButton = {
+        let chose = UIButton()
+        chose.setImage(UIImage(systemName: "camera"), for: .normal)
+        chose.translatesAutoresizingMaskIntoConstraints = false
+        chose.layer.cornerRadius = chose.frame.height / 2
+        chose.layer.masksToBounds = true
+        chose.tintColor = .black
+        chose.backgroundColor = .lightText
+        return chose
+    }()
+    var saveImageBtn: UIButton = {
+        let saveBtn = UIButton()
+        saveBtn.setTitle(" Save", for: .normal)
+        saveBtn.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        saveBtn.setTitleColor(.systemGreen, for: .normal)
+        saveBtn.tintColor = .systemGreen
+        saveBtn.translatesAutoresizingMaskIntoConstraints = false
+        return saveBtn
+    }()
+    var cancelImageBtn: UIButton = {
+        let cancelBtn = UIButton()
+        cancelBtn.setImage(#imageLiteral(resourceName: "close"), for: .normal)
+        cancelBtn.translatesAutoresizingMaskIntoConstraints = false
+        return cancelBtn
+    }()
+    var emailLbl: UILabel = {
+        let label = UILabel()
+        label.textColor = #colorLiteral(red: 0.4125089049, green: 0.8123833537, blue: 0.9942517877, alpha: 1)
+        label.font = UIFont(name: "Menlo-Bold", size: 20)
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    var bioLbl: UILabel = {
+        let label = UILabel()
+        label.text = "First stop on our #EuropaRoadTrip with my 🥜 Lloyd Griffith and Enterprise… "
+        label.textColor = #colorLiteral(red: 0.4125089049, green: 0.8123833537, blue: 0.9942517877, alpha: 1)
+        label.font = UIFont(name: "Menlo", size: 16)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         emailLbl.text = Auth.auth().currentUser?.email
         
+
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target:  self,action: #selector(selectProfileImageView) ))
         profileImage.isUserInteractionEnabled = true
-        profileImage.layer.cornerRadius = profileImage.frame.height / 2
-        profileImage.layer.masksToBounds = true
         
         choseImage.addGestureRecognizer(UITapGestureRecognizer(target:  self,action: #selector(selectProfileImageView) ))
         choseImage.isUserInteractionEnabled = true
-        choseImage.layer.cornerRadius = choseImage.frame.height / 2
-        choseImage.layer.masksToBounds = true
+        
+        saveImageBtn.addTarget(self, action: #selector(saveImageBtnWasPressed), for: .touchUpInside)
+        cancelImageBtn.addTarget(self, action: #selector(cancelBtnImageWasPressed), for: .touchUpInside)
         
         cancelImageBtn.isHidden = true
         saveImageBtn.isHidden = true
@@ -62,10 +104,39 @@ class MeVC: UIViewController {
         }
     }
     func setupHeaderView(){
-        headerView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 300)
+        headerView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 250)
         tableView.addSubview(headerView)
         
+        headerView.addSubview(profileImage)
+        profileImage.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 16).isActive = true
+        profileImage.centerXAnchor.constraint(equalTo: headerView.centerXAnchor).isActive = true
+        profileImage.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        profileImage.widthAnchor.constraint(equalToConstant: 100).isActive = true
         
+        headerView.addSubview(choseImage)
+        choseImage.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 0).isActive = true
+        choseImage.trailingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 0).isActive = true
+        
+      
+        headerView.addSubview(cancelImageBtn)
+        cancelImageBtn.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        cancelImageBtn.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        cancelImageBtn.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 0).isActive = true
+        cancelImageBtn.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 0).isActive = true
+        
+        headerView.addSubview(saveImageBtn)
+        saveImageBtn.leadingAnchor.constraint(equalTo: profileImage.trailingAnchor, constant: 0).isActive = true
+        saveImageBtn.topAnchor.constraint(equalTo: cancelImageBtn.bottomAnchor, constant: 16).isActive = true
+
+        headerView.addSubview(emailLbl)
+        emailLbl.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 16).isActive = true
+        emailLbl.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16).isActive = true
+        emailLbl.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16).isActive = true
+        
+        headerView.addSubview(bioLbl)
+        bioLbl.topAnchor.constraint(equalTo: emailLbl.bottomAnchor, constant: 16).isActive = true
+        bioLbl.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16).isActive = true
+        bioLbl.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16).isActive = true
     }
     @objc func selectProfileImageView(){
         let pickerImage = UIImagePickerController()
@@ -99,7 +170,7 @@ class MeVC: UIViewController {
             self.profileImage.image = image
         }
     }
-    @IBAction func saveImageBtnWasPressed(_ sender: Any) {
+    @objc func saveImageBtnWasPressed() {
         let imageName = NSUUID().uuidString
         let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).jpg")
         let image = self.profileImage.image!
@@ -130,7 +201,7 @@ class MeVC: UIViewController {
         }
     }
     
-    @IBAction func cancelBtnImageWasPressed(_ sender: Any) {
+    @objc func cancelBtnImageWasPressed() {
         saveImageBtn.isHidden = true
         cancelImageBtn.isHidden = true
         DataService.instance.getUserImage(withUid: Auth.auth().currentUser!.uid, handler: { (image, error) in
@@ -201,7 +272,7 @@ extension MeVC: UITableViewDelegate, UITableViewDataSource {
         return estimatedFrame.height + 100
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 300
+        return 250
     }
     
 }
