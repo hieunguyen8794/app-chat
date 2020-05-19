@@ -47,18 +47,19 @@ class ProfileView: UIView {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(FeedCell.self, forCellReuseIdentifier: "feedCell")
-//        DataService.instance.REF_FEED.observe(.value) { (DataSnapshot) in
-//            DataService.instance.getAllFeedWithUid(uid: "uid") { (messageArray) in
-//                self.messageArray = messageArray.reversed()
-//                self.tableView.reloadData()
-//            }
-//        }
+
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    override func isKind(of aClass: AnyClass) -> Bool {
+        if aClass == ProfileView.self {
+            return true
+        } else {
+            return false
+        }
+    }
     func initData(withUID uid: String) {
         DataService.instance.getUserName(withUid: uid) { (userName) in
             self.labelTitle.text = userName
@@ -198,22 +199,37 @@ extension ProfileView: UITableViewDataSource,UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell") as? FeedCell else { return UITableViewCell()}
-        
-        if indexPath.row == 0 {
-            
-        }
-        
         let message = messageArray[indexPath.row]
         cell.selectionStyle = .none
+        var numberLike = Int()
+        DataService.instance.REF_FEED.child(message.keyFeed).observe(.value) { (DataSnapshot) in
+            DataService.instance.getLikeFeed(withKey: message.keyFeed) { (resultData) in
+                numberLike = resultData.count
+            }
+        }
         DataService.instance.getUserImage(withUid: message.senderId) { (image, error) in
             if error != nil {
                 print(error!)
             }
             DataService.instance.getUserName(withUid: message.senderId) { (resultUserName) in
                 DispatchQueue.main.async {
-                    cell.configure(imageView: image!, userMail: resultUserName, message: message.content,timeStamp: message.timeStamp)
+                    cell.configure(imageView: image!, userMail: resultUserName, message: message.content,timeStamp: message.timeStamp,numberOfLike: numberLike)
                 }
             }
+        }
+        
+        cell.actionMoveToPost = {
+            if var topController = UIApplication.shared.keyWindow?.rootViewController {
+               while let presentedViewController = topController.presentedViewController {
+                   topController = presentedViewController
+               }
+               // topController now can use for present.
+               let feedDetail = self.messageArray[indexPath.row]
+               let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+               let detailFeedVC = storyBoard.instantiateViewController(withIdentifier: "DetailFeedVC") as! DetailFeedVC
+               detailFeedVC.getDetailFeed(message: feedDetail)
+               topController.present(detailFeedVC, animated: true, completion: nil)
+           }
         }
         return cell
     }
@@ -225,7 +241,7 @@ extension ProfileView: UITableViewDataSource,UITableViewDelegate{
         let estimatedFrame = NSString(string: message.content).boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes as [NSAttributedString.Key : Any], context: nil)
         
         //print(estimatedFrame.height)
-        return estimatedFrame.height + 100
+        return estimatedFrame.height + 140
     }
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         

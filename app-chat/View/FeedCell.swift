@@ -56,6 +56,23 @@ class FeedCell: UITableViewCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
     }()
+    
+    let commentBtn: UIButton = {
+        let btn = UIButton()
+        btn.setImage(UIImage(systemName: "bubble.right"), for: .normal)
+        btn.tintColor = .white
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        return btn
+    }()
+    
+    let likeNumber: UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Menlo", size: 12)
+        label.textColor = #colorLiteral(red: 0.2588235438, green: 0.7568627596, blue: 0.9686274529, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        return label
+    }()
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style,reuseIdentifier: reuseIdentifier)
         backgroundColor = #colorLiteral(red: 0.1817291081, green: 0.186937958, blue: 0.20142892, alpha: 1)
@@ -68,8 +85,16 @@ class FeedCell: UITableViewCell {
     @objc func moveToProfile() {
         actionBlock()
     }
+    var likeFeed = { }
+    @objc func likeThatFeed() {
+        likeFeed()
+    }
+    var actionMoveToPost = { }
+    @objc func moveToPost(){
+        actionMoveToPost()
+    }
     
-    func configure (imageView: UIImage,userMail: String,message: String,timeStamp: NSNumber){
+    func configure (imageView: UIImage,userMail: String,message: String,timeStamp: NSNumber,numberOfLike: Int){
         let timeStamp: NSNumber = timeStamp
         addSubview(profileImage)
         profileImage.image = imageView
@@ -78,9 +103,17 @@ class FeedCell: UITableViewCell {
         userName.isUserInteractionEnabled = true
         profileImage.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moveToProfile)))
         profileImage.isUserInteractionEnabled = true
-        
+        likeBtn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(likeThatFeed)))
+        likeBtn.isUserInteractionEnabled = true
+        commentBtn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(moveToPost)))
+        commentBtn.isUserInteractionEnabled = true
         mainContent.text = message
         setupTimeStamp(timeStamp: timeStamp)
+        if numberOfLike > 0 {
+            likeNumber.text = "\(numberOfLike) likes"
+        } else {
+            likeNumber.text = ""
+        }
         let profileImageContrains = [
             profileImage.topAnchor.constraint(equalTo: topAnchor,constant: 16),
             profileImage.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
@@ -109,28 +142,39 @@ class FeedCell: UITableViewCell {
         let mainContainConstrains = [
             mainContent.topAnchor.constraint(equalTo: profileImage.bottomAnchor,constant: 16),
             mainContent.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
-            mainContent.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16),
-            mainContent.bottomAnchor.constraint(equalTo: bottomAnchor,constant: -16)
+            mainContent.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16)
         ]
         NSLayoutConstraint.activate(mainContainConstrains)
      
-//        addSubview(likeBtn)
-//        let likeBtnConstrains = [
-//            likeBtn.topAnchor.constraint(equalTo: mainContent.bottomAnchor, constant: 0),
-//            likeBtn.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 16),
-//            likeBtn.heightAnchor.constraint(equalToConstant: 32),
-//            likeBtn.widthAnchor.constraint(equalToConstant: 32)
-//        ]
-//        NSLayoutConstraint.activate(likeBtnConstrains)
+        addSubview(likeBtn)
+        let likeBtnConstrains = [
+            likeBtn.topAnchor.constraint(equalTo: mainContent.bottomAnchor, constant: 8),
+            likeBtn.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 32)
+        ]
+        NSLayoutConstraint.activate(likeBtnConstrains)
         
-//        addSubview(separatorView)
-//        let separatorViewConstrains = [
-//            separatorView.topAnchor.constraint(equalTo: likeBtn.bottomAnchor, constant: 16),
-//            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 0),
-//            separatorView.trailingAnchor.constraint(equalTo: trailingAnchor,constant: 0),
-//            separatorView.heightAnchor.constraint(equalToConstant: 10)
-//        ]
-//        NSLayoutConstraint.activate(separatorViewConstrains)
+        addSubview(commentBtn)
+        let commentBtnConstrains = [
+            commentBtn.topAnchor.constraint(equalTo: mainContent.bottomAnchor, constant: 8),
+            commentBtn.leadingAnchor.constraint(equalTo: likeBtn.trailingAnchor,constant: 16)
+        ]
+        NSLayoutConstraint.activate(commentBtnConstrains)
+        
+        addSubview(likeNumber)
+        let likeNumberConstrains = [
+            likeNumber.topAnchor.constraint(equalTo: likeBtn.bottomAnchor, constant: 8),
+            likeNumber.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32)
+        ]
+        NSLayoutConstraint.activate(likeNumberConstrains)
+        
+        addSubview(separatorView)
+        let separatorViewConstrains = [
+            separatorView.topAnchor.constraint(equalTo: likeNumber.bottomAnchor, constant: 8),
+            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: 0),
+            separatorView.trailingAnchor.constraint(equalTo: trailingAnchor,constant: 0),
+            separatorView.heightAnchor.constraint(equalToConstant: 10)
+        ]
+        NSLayoutConstraint.activate(separatorViewConstrains)
     }
     func setupTimeStamp (timeStamp: NSNumber) {
         let timeStampData = NSDate(timeIntervalSince1970: timeStamp.doubleValue)

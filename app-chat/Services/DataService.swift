@@ -48,6 +48,51 @@ class DataService {
         REF_USERS.child(uid).updateChildValues(["photoURL": url])
         Complete(true)
     }
+    func uploadComment(withMessage message: String, forUser uid: String ,forFeed key: String,sendComplete: @escaping (_ status: Bool) -> ()){
+        REF_FEED.child(key).child("comments").childByAutoId().updateChildValues(["content" : message,"sendID" : uid,"timestamp": Int(NSDate().timeIntervalSince1970)])
+        sendComplete(true)
+    }
+    func uploadLike(forFeed key: String,sendComplete: @escaping (_ status: Bool) -> ()){
+        REF_FEED.child(key).child("likes").observeSingleEvent(of: .value) { (likeSnapshot) in
+            guard let likeSnapshot = likeSnapshot.children.allObjects as? [DataSnapshot] else {return}
+            for like in likeSnapshot {
+                if like.childSnapshot(forPath: "sendID").value as? String == Auth.auth().currentUser?.uid {
+                    let keyPost = like.key
+                    self.REF_FEED.child(key).child("likes").child(keyPost).removeValue()
+                    sendComplete(false)
+                    return
+                }
+            }
+            self.REF_FEED.child(key).child("likes").childByAutoId().updateChildValues(["sendID" : Auth.auth().currentUser!.uid,"timestamp": Int(NSDate().timeIntervalSince1970)])
+            sendComplete(true)
+            return
+        }
+    }
+    func getLikeFeed(withKey key: String, handler: @escaping (_ likeData: [String])->()){
+        var likeData = [String]()
+        REF_FEED.child(key).child("likes").observeSingleEvent(of: .value) { (resultData) in
+            guard let resultData = resultData.children.allObjects as? [DataSnapshot] else {return}
+            for like in resultData {
+                likeData.append(like.childSnapshot(forPath: "sendID").value as! String)
+            }
+            handler(likeData)
+        }
+    }
+    func getCommetFeed(withKey key: String, handler: @escaping (_ likeData: [Message])->()){
+        var commentArray = [Message]()
+        REF_FEED.child(key).child("comments").observeSingleEvent(of: .value) { (feedCommentSnapshot) in
+            guard let feedCommentSnapshot = feedCommentSnapshot.children.allObjects as? [DataSnapshot] else {return}
+            for comment in feedCommentSnapshot {
+                let keyFeed = comment.key
+                let content = comment.childSnapshot(forPath: "content").value as! String
+                let senderId = comment.childSnapshot(forPath: "sendID").value as! String
+                let timeStamp = comment.childSnapshot(forPath: "timestamp").value  as! NSNumber
+                let comment = Message(keyFeed: keyFeed,content: content, senderId: senderId, timeStamp: timeStamp)
+                commentArray.append(comment)
+            }
+            handler(commentArray)
+        }
+    }
     func getUserName (withUid uid: String, handler: @escaping (_ result: String)->()){
         REF_USERS.child(uid).observe(.value) { (result) in
             handler(result.childSnapshot(forPath: "email").value as! String)

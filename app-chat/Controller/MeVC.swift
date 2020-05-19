@@ -98,7 +98,7 @@ class MeVC: UIViewController {
         super.viewWillAppear(animated)
         DataService.instance.REF_FEED.observe(.value) { (result) in
             DataService.instance.getAllFeedWithUid(uid: Auth.auth().currentUser!.uid) { (resultMessage) in
-                self.messageArray = resultMessage
+                self.messageArray = resultMessage.reversed()
                 self.tableView.reloadData()
             }
         }
@@ -250,15 +250,41 @@ extension MeVC: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell") as? FeedCell else { return UITableViewCell()}
         let message = messageArray[indexPath.row]
         var imageProfile:UIImage = #imageLiteral(resourceName: "defaultProfileImage")
+        
+        
         DataService.instance.getUserImage(withUid: message.senderId) { (image, error) in
             if error != nil {
                 print(error!)
             } else {
                 imageProfile = image!
-                cell.configure(imageView: imageProfile, userMail: Auth.auth().currentUser!.email!, message: message.content, timeStamp: message.timeStamp)
+                DataService.instance.getLikeFeed(withKey: message.keyFeed) { (resultData) in
+                    
+                    cell.configure(imageView: imageProfile, userMail: Auth.auth().currentUser!.email!, message: message.content, timeStamp: message.timeStamp,numberOfLike: resultData.count)
+                    if resultData.contains(Auth.auth().currentUser!.uid) {
+                        cell.likeBtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                    } else {
+                        cell.likeBtn.setImage(UIImage(systemName: "heart"), for: .normal)
+                    }
+                }
             }
         }
         cell.selectionStyle = .none
+        
+        cell.actionMoveToPost = {
+            let feedDetail = self.messageArray[indexPath.row]
+            guard let detailFeedVC = self.storyboard?.instantiateViewController(identifier: "DetailFeedVC") as? DetailFeedVC else { return }
+            detailFeedVC.getDetailFeed(message: feedDetail)
+            self.present(detailFeedVC, animated: true, completion: nil)
+        }
+        cell.likeFeed = {
+            DataService.instance.uploadLike(forFeed: message.keyFeed) { (result) in
+                if result {
+                    cell.likeBtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                } else {
+                    cell.likeBtn.setImage(UIImage(systemName: "heart"), for: .normal)
+                }
+            }
+        }
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -269,7 +295,7 @@ extension MeVC: UITableViewDelegate, UITableViewDataSource {
         let estimatedFrame = NSString(string: message.content).boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes as [NSAttributedString.Key : Any], context: nil)
         
         //print(estimatedFrame.height)
-        return estimatedFrame.height + 100
+        return estimatedFrame.height + 140
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 250

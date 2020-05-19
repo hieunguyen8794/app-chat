@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
+class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate{
     @IBOutlet var mainView: UIView!
     @IBOutlet weak var barView: UITabBarItem!
     @IBOutlet weak var tableView: UITableView!
@@ -43,6 +43,7 @@ class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
         tableView.register(FeedCell.self, forCellReuseIdentifier: "feedCell")
         
         setupHeader()
+
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -53,7 +54,6 @@ class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
             }
         }
         tableView.separatorStyle = .none
-        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -77,6 +77,7 @@ class FeedVC: UIViewController ,UIAdaptivePresentationControllerDelegate{
         guard let createPostVC = self.storyboard?.instantiateViewController(withIdentifier: "CreatePostVC") else { return }
         self.present(createPostVC, animated: true, completion: nil)
     }
+
 }
 extension FeedVC: UITableViewDelegate,UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -89,21 +90,37 @@ extension FeedVC: UITableViewDelegate,UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "feedCell") as? FeedCell else {return UITableViewCell()}
         let message = messageArray[indexPath.row]
         cell.selectionStyle = .none
+        var numberLike = Int()
+        DataService.instance.REF_FEED.child(message.keyFeed).observe(.value) { (DataSnapshot) in
+            DataService.instance.getLikeFeed(withKey: message.keyFeed) { (resultData) in
+                numberLike = resultData.count
+                if resultData.contains(Auth.auth().currentUser!.uid) {
+                    cell.likeBtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                } else {
+                    cell.likeBtn.setImage(UIImage(systemName: "heart"), for: .normal)
+                }
+            }
+        }
         DataService.instance.getUserImage(withUid: message.senderId) { (image, error) in
             if error != nil {
                 print(error!)
             }
             DataService.instance.getUserName(withUid: message.senderId) { (resultUserName) in
                 DispatchQueue.main.async {
-                    cell.configure(imageView: image!, userMail: resultUserName, message: message.content,timeStamp: message.timeStamp)
+                    cell.configure(imageView: image!, userMail: resultUserName, message: message.content,timeStamp: message.timeStamp,numberOfLike: numberLike)
                 }
             }
         }
         cell.actionBlock = {
             let profileView = ProfileView()
             profileView.initData(withUID: message.senderId)
-            
             self.view.addSubview(profileView)
+            
+            let gesture = UIPanGestureRecognizer(target: self, action: #selector(self.wasDragged))
+            profileView.addGestureRecognizer(gesture)
+            profileView.isUserInteractionEnabled = true
+            gesture.delegate = self
+            
             let profileViewConstrains = [
                 profileView.topAnchor.constraint(equalTo: self.mainView!.topAnchor,constant: 0),
                 profileView.leadingAnchor.constraint(equalTo: self.mainView!.leadingAnchor,constant: 0),
@@ -118,7 +135,50 @@ extension FeedVC: UITableViewDelegate,UITableViewDataSource{
                 
             }
         }
+        cell.actionMoveToPost = {
+            let feedDetail = self.messageArray[indexPath.row]
+            guard let detailFeedVC = self.storyboard?.instantiateViewController(identifier: "DetailFeedVC") as? DetailFeedVC else { return }
+            detailFeedVC.getDetailFeed(message: feedDetail)
+          
+            self.present(detailFeedVC, animated: true, completion: nil)
+                      
+        }
+        cell.likeFeed = {
+            DataService.instance.uploadLike(forFeed: message.keyFeed) { (result) in
+                if result {
+                    cell.likeBtn.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+                } else {
+                    cell.likeBtn.setImage(UIImage(systemName: "heart"), for: .normal)
+                }
+            }
+        }
         return cell
+    }
+    @objc func wasDragged(gestureRecognizer: UIPanGestureRecognizer) {
+        switch gestureRecognizer.state {
+        case .began , .changed:
+            let translation = gestureRecognizer.translation(in: self.view)
+            let centerXOfView = gestureRecognizer.view!.center.x
+            //print(gestureRecognizer.view!.center.x)
+            
+            if(centerXOfView >= view.frame.width / 2) {
+                gestureRecognizer.view!.center = CGPoint(x: gestureRecognizer.view!.center.x + translation.x, y: gestureRecognizer.view!.center.y)
+
+            }
+            gestureRecognizer.setTranslation(CGPoint(x: 0,y: 0), in: self.view)
+        case .ended:
+            print("ended")
+            if(gestureRecognizer.view!.center.x < view.frame.width) {
+                gestureRecognizer.view!.center = CGPoint(x: view.frame.width / 2, y: gestureRecognizer.view!.center.y)
+            } else {
+                gestureRecognizer.view!.center = CGPoint(x: view.frame.width * 1.5, y: gestureRecognizer.view!.center.y)
+                gestureRecognizer.view!.removeFromSuperview()
+            }
+        case .cancelled, .failed:
+            print("cancelled - failed")
+        default:
+            break
+        }
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let feedDetail = messageArray[indexPath.row]
@@ -134,7 +194,7 @@ extension FeedVC: UITableViewDelegate,UITableViewDataSource{
         let estimatedFrame = NSString(string: message.content).boundingRect(with: size, options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: attributes as [NSAttributedString.Key : Any], context: nil)
         
         //print(estimatedFrame.height)
-        return estimatedFrame.height + 100
+        return estimatedFrame.height + 140
     }
  
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -168,7 +228,7 @@ extension FeedVC: UITableViewDelegate,UITableViewDataSource{
         self.titleLbl.alpha =  alpha
         self.createPostBtn.alpha = alpha
     }
-    
+
     
 }
 
